@@ -1,33 +1,3 @@
-修改项：
-
-新增环境变量：
-```bash
-export HCCL_OP_EXPANSION_MODE=AIV
-```
-
-去除变量（弃用）： 
-```
-SGLANG_SCHEDULER_DECREASE_PREFILL_IDLE
-SGLANG_PREFILL_DELAYER_MAX_DELAY_PASSES
-```
-
-修改入参：
-```bash
---mem-fraction-static 0.753 
---max-running-requests 80 
---context-length 6144 
---max-prefill-tokens 65536 
---cuda-graph-bs 1 2 3 4 5
-```
-
-添加入参：
-```
---prefill-delayer-max-delay-passes 200
---enable-prefill-delayer
-```
-
----
-
 完整脚本：
 
 ```bash
@@ -88,7 +58,7 @@ sglang serve \
     --dp-size 16 \
     --moe-a2a-backend deepep \
     --deepep-mode auto \
-    --cuda-graph-bs 1 2 3 4 5 \
+    --cuda-graph-bs-decode 1 2 3 4 5 \
     --disable-radix-cache \
     --model-loader-extra-config '{"enable_multithread_load": true}' \
     --speculative-algorithm EAGLE3 \
