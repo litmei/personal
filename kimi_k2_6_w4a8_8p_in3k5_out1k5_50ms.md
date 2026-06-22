@@ -133,3 +133,55 @@ P99 ITL (ms):                            268.73
 Max ITL (ms):                            12173.87  
 ==================================================
 ```
+
+
+---
+
+kimi2.7
+
+```bash
+============ Serving Benchmark Result ============
+Backend:                                 sglang    
+Traffic request rate:                    inf       
+Max request concurrency:                 192       
+Successful requests:                     768       
+Benchmark duration (s):                  348.86    
+Total input tokens:                      2688000   
+Total input text tokens:                 2688000   
+Total generated tokens:                  1152000   
+Total generated tokens (retokenized):    1151762   
+Request throughput (req/s):              2.20      
+Input token throughput (tok/s):          7705.06   
+Output token throughput (tok/s):         3302.17   
+Peak output token throughput (tok/s):    6836.00   
+Peak concurrent requests:                230       
+Total token throughput (tok/s):          11007.22  
+Concurrency:                             170.85    
+Accept length:                           4.55      
+----------------End-to-End Latency----------------
+Mean E2E Latency (ms):                   77607.46  
+Median E2E Latency (ms):                 74925.60  
+P90 E2E Latency (ms):                    97021.59  
+P95 E2E Latency (ms):                    109325.60 
+P99 E2E Latency (ms):                    134470.17 
+---------------Time to First Token----------------
+Mean TTFT (ms):                          14256.83  
+Median TTFT (ms):                        11817.90  
+P90 TTFT (ms):                           24669.15  
+P95 TTFT (ms):                           25936.86  
+P99 TTFT (ms):                           58436.37  
+-----Time per Output Token (excl. 1st token)------
+Mean TPOT (ms):                          42.26     
+Median TPOT (ms):                        41.22     
+P90 TPOT (ms):                           52.17     
+P95 TPOT (ms):                           59.14     
+P99 TPOT (ms):                           79.00     
+---------------Inter-Token Latency----------------
+Mean ITL (ms):                           42.26     
+Median ITL (ms):                         25.68     
+P90 ITL (ms):                            35.65     
+P95 ITL (ms):                            68.27     
+P99 ITL (ms):                            298.98    
+Max ITL (ms):                            22450.95  
+==================================================
+```

@@ -91,7 +91,6 @@ python3 -m sglang.bench_serving \
         --num-prompts 256 \
         --base-url http://127.0.0.1:8880 \
         --dataset-path /path/to/ShareGPT_V3/ShareGPT_V3_unfiltered_cleaned_split.json \
-        --disable-ignore-eos \
         --warmup-requests 0
 ```
 
@@ -135,5 +134,57 @@ Median ITL (ms):                         16.38
 P95 ITL (ms):                            27.04     
 P99 ITL (ms):                            223.17    
 Max ITL (ms):                            2854.33   
+==================================================
+```
+
+---
+
+kimi2.7
+
+```bash
+
+============ Serving Benchmark Result ============
+Backend:                                 sglang    
+Traffic request rate:                    inf       
+Max request concurrency:                 64        
+Successful requests:                     256       
+Benchmark duration (s):                  192.03    
+Total input tokens:                      896000    
+Total input text tokens:                 896000    
+Total generated tokens:                  384000    
+Total generated tokens (retokenized):    383935    
+Request throughput (req/s):              1.33      
+Input token throughput (tok/s):          4665.94   
+Output token throughput (tok/s):         1999.69   
+Peak output token throughput (tok/s):    3623.00   
+Peak concurrent requests:                87        
+Total token throughput (tok/s):          6665.63   
+Concurrency:                             56.16     
+Accept length:                           4.56      
+----------------End-to-End Latency----------------
+Mean E2E Latency (ms):                   42123.49  
+Median E2E Latency (ms):                 40376.83  
+P90 E2E Latency (ms):                    51925.56  
+P95 E2E Latency (ms):                    56832.33  
+P99 E2E Latency (ms):                    70293.64  
+---------------Time to First Token----------------
+Mean TTFT (ms):                          9499.99   
+Median TTFT (ms):                        8922.12   
+P90 TTFT (ms):                           15405.22  
+P95 TTFT (ms):                           18984.28  
+P99 TTFT (ms):                           23021.88  
+-----Time per Output Token (excl. 1st token)------
+Mean TPOT (ms):                          21.76     
+Median TPOT (ms):                        20.69     
+P90 TPOT (ms):                           25.30     
+P95 TPOT (ms):                           29.86     
+P99 TPOT (ms):                           40.82     
+---------------Inter-Token Latency----------------
+Mean ITL (ms):                           21.76     
+Median ITL (ms):                         16.50     
+P90 ITL (ms):                            20.68     
+P95 ITL (ms):                            28.10     
+P99 ITL (ms):                            223.29    
+Max ITL (ms):                            3909.99   
 ==================================================
 ```
