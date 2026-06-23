@@ -1,154 +1,4 @@
-修改项：
-
-```
-
-PREFILL_ENVS = {
-    "PYTORCH_NPU_ALLOC_CONF": "expandable_segments:True",
-    "SGLANG_SET_CPU_AFFINITY": "1",
-    "STREAMS_PER_DEVICE": "32",
-    "DEEP_NORMAL_MODE_USE_INT8_QUANT": "1",
-    "SGLANG_DISAGGREGATION_BOOTSTRAP_TIMEOUT": "60",
-    "HCCL_SOCKET_IFNAME": "lo",
-    "GLOO_SOCKET_IFNAME": "lo",
-    "HCCL_BUFFSIZE": "8",
-    "SGLANG_ZBAL_LOCAL_MEM_SIZE": "61184",
-    "SGLANG_ENABLE_TP_MEMORY_INBALANCE_CHECK": "0",
-    "ZBAL_NPU_ALLOC_CONF": "use_vmm_for_static_memory:True",
-    "SGLANG_ZBAL_BOOTSTRAP_URL": "tcp://127.0.0.1:24699",
-    "ZBAL_ENABLE_GRAPH": "1",
-    "ZBAL_HCCL_OP": "send,recv",                                                -> 去掉
-}
-
-DECODE_ENVS = {
-    "PYTORCH_NPU_ALLOC_CONF": "expandable_segments:True",
-    "SGLANG_SET_CPU_AFFINITY": "1",
-    "STREAMS_PER_DEVICE": "32",
-    "DEEP_NORMAL_MODE_USE_INT8_QUANT": "1",
-    "SGLANG_DISAGGREGATION_BOOTSTRAP_TIMEOUT": "60",
-    "HCCL_SOCKET_IFNAME": "lo",
-    "GLOO_SOCKET_IFNAME": "lo",
-    "HCCL_BUFFSIZE": "1200",
-    "SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK": "64",
-    "SGLANG_ENABLE_SPEC_V2": "1",
-    "SGLANG_ENABLE_OVERLAP_PLAN_STREAM": "1",
-    "SGLANG_NPU_USE_MLAPO": "1",
-    "SGLANG_NPU_USE_MULTI_STREAM": "1",
-}
-
-PREFILL_ARGS = [
-    "--quantization",
-    "modelslim",
-    "--dtype",
-    "bfloat16",
-    "--disaggregation-mode",
-    "prefill",
-    "--disaggregation-transfer-backend",
-    "ascend",
-    "--nnodes",
-    "1",
-    "--node-rank",
-    "0",
-    "--trust-remote-code",
-    "--attention-backend",
-    "ascend",
-    "--device",
-    "npu",
-    "--tp-size",
-    16,
-    "--mem-fraction-static",
-    0.78,
-    "--max-running-requests",
-    2,
-    "--moe-a2a-backend",
-    "deepep",
-    "--deepep-mode",
-    "auto",
-    "--chunked-prefill-size",
-    16384,
-    "--prefill-max-requests",
-    2,
-    "--max-prefill-tokens",
-    65536,
-    "--enable-multimodal",
-    "--mm-attention-backend",
-    "ascend_attn",
-    "--sampling-backend",
-    "ascend",
-]
-
-DECODE_ARGS = [
-    "--quantization",
-    "modelslim",
-    "--dtype",
-    "bfloat16",
-    "--disaggregation-mode",
-    "decode",
-    "--disaggregation-transfer-backend",
-    "ascend",
-    "--nnodes",
-    "1",
-    "--trust-remote-code",
-    "--attention-backend",
-    "ascend",
-    "--device",
-    "npu",
-    "--tp-size",
-    16,
-    "--mem-fraction-static",
-    0.82,                                                                   -> 修改成 0.73
-    "--max-running-requests",
-    2,
-    "--enable-dp-attention",
-    "--dp-size",
-    2,                                                                      -> dpsize 修改成 1
-    "--enable-dp-lm-head",
-    "--disable-radix-cache",
-    "--enable-multimodal",
-    "--mm-attention-backend",
-    "ascend_attn",
-    "--sampling-backend",
-    "ascend",
-    "--moe-a2a-backend",
-    "deepep",
-    "--deepep-mode",
-    "auto",
-    "--cuda-graph-bs",                                                   
-    1,
-    2,
-    4,
-    6,
-    8,
-    12,
-                                                                                    -> 添加MTP
-                                                                                        --speculative-algorithm EAGLE3 \
-                                                                                        --speculative-draft-model-path $DRAFT_MODEL_PATH \
-                                                                                        --speculative-num-steps 3 \
-                                                                                        --speculative-eagle-topk 1 \
-                                                                                        --speculative-num-draft-tokens 4 \
-                                                                                        --speculative-draft-model-quantization unquant 
-]
-
-
-class TestNPUKimiK2_6_W4A8_1P1D_16p_In128k_Out1k_Prefix90_100ms(
-    TestAscendPerfMultiNodePdSepTestCaseBase
-):
-    """Test NPU performance for Kimi-K2.6-w4a8 1P+1D 16p: input_len=131072, output_len=1024, 90% prefix cache, TPOT=100ms"""
-
-    model_config = MODEL_CONFIG
-    benchmark_tool = BENCHMARK_TOOL_DEFAULT
-    dataset_name = "generated-shared-prefix"
-    max_concurrency = 2                                                             -> 1
-    num_prompts = 8                                                                 -> 4
-    request_rate = float("inf")
-    repeat_rate = 0.9
-    input_len = 131072                                                              -> 调整至 128000
-    output_len = 1024                                                               -> 调整至 1000
-    random_range_ratio = 1
-    tpot = 100
-    ttft = 5000
-    output_token_throughput = 21.41                                                 -> 可考虑调高至 51.90
-```
-
+修改项：--mem-fraction-static 0.82
 
 完整脚本：
 
@@ -208,7 +58,7 @@ do
             --disaggregation-mode prefill --disaggregation-transfer-backend ascend \
             --host ${P_IP[$i]} --port 8100 --disaggregation-bootstrap-port $((8998+$i)) --nnodes 1 --node-rank 0 \
             --trust-remote-code --device npu --attention-backend ascend \
-            --tp-size 16 --disable-radix-cache \
+            --tp-size 16 \
             --mem-fraction-static 0.78 --max-running-requests 2 \
             --moe-a2a-backend deepep --deepep-mode auto \
             --chunked-prefill-size 16384 --prefill-max-requests 2 --max-prefill-tokens 65536 \
@@ -244,7 +94,7 @@ do
             --disaggregation-mode decode --disaggregation-transfer-backend ascend \
             --host ${D_IP[$i]} --port 8111 --dist-init-addr ${D_IP[0]}:5000 --nnodes 1 --node-rank $i \
             --trust-remote-code --device npu --attention-backend ascend \
-            --tp-size 16 --mem-fraction-static 0.73 --max-running-requests 2 \
+            --tp-size 16 --mem-fraction-static 0.82 --max-running-requests 2 \
             --enable-dp-attention --dp-size 1 --enable-dp-lm-head \
             --disable-radix-cache \
             --enable-multimodal --mm-attention-backend ascend_attn --sampling-backend ascend \
@@ -353,5 +203,50 @@ Median ITL (ms):                         13.12
 P95 ITL (ms):                            21.65     
 P99 ITL (ms):                            64.68     
 Max ITL (ms):                            91.77     
+==================================================
+```
+
+
+---
+
+kimi 27
+
+``` 
+============ Serving Benchmark Result ============
+Backend:                                 sglang    
+Traffic request rate:                    inf       
+Max request concurrency:                 1         
+Successful requests:                     4         
+Benchmark duration (s):                  83.86     
+Total input tokens:                      523330    
+Total input text tokens:                 523330    
+Total generated tokens:                  4000      
+Total generated tokens (retokenized):    4000      
+Request throughput (req/s):              0.05      
+Input token throughput (tok/s):          6240.44   
+Output token throughput (tok/s):         47.70     
+Peak output token throughput (tok/s):    77.00     
+Peak concurrent requests:                2         
+Total token throughput (tok/s):          6288.14   
+Concurrency:                             1.00      
+----------------End-to-End Latency----------------
+Mean E2E Latency (ms):                   20963.61  
+Median E2E Latency (ms):                 18227.70  
+P90 E2E Latency (ms):                    26233.56  
+P99 E2E Latency (ms):                    29295.10  
+---------------Time to First Token----------------
+Mean TTFT (ms):                          4478.94   
+Median TTFT (ms):                        4464.03   
+P99 TTFT (ms):                           4529.83   
+-----Time per Output Token (excl. 1st token)------
+Mean TPOT (ms):                          16.50     
+Median TPOT (ms):                        13.74     
+P99 TPOT (ms):                           24.85     
+---------------Inter-Token Latency----------------
+Mean ITL (ms):                           16.51     
+Median ITL (ms):                         13.24     
+P95 ITL (ms):                            52.03     
+P99 ITL (ms):                            53.35     
+Max ITL (ms):                            85.58     
 ==================================================
 ```

@@ -1,3 +1,5 @@
+修改项：--mem-fraction-static 0.865
+
 完整脚本：
 
 ```bash
@@ -46,7 +48,7 @@ sglang serve \
     --quantization modelslim \
     --dtype bfloat16 \
     --tp-size 16 \
-    --mem-fraction-static 0.753 \
+    --mem-fraction-static 0.865 \
     --max-running-requests 80 \
     --chunked-prefill-size 32768 \
     --context-length 6144 \

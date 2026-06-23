@@ -1,166 +1,4 @@
-修改项：
-
-```
-PREFILL_ENVS = {
-    "PYTORCH_NPU_ALLOC_CONF": "expandable_segments:True",
-    "SGLANG_SET_CPU_AFFINITY": "1",
-    "STREAMS_PER_DEVICE": "32",
-    "DEEP_NORMAL_MODE_USE_INT8_QUANT": "1",
-    "SGLANG_DISAGGREGATION_BOOTSTRAP_TIMEOUT": "60",
-    "HCCL_SOCKET_IFNAME": "lo",
-    "GLOO_SOCKET_IFNAME": "lo",
-    "HCCL_BUFFSIZE": "8",
-    "SGLANG_ZBAL_LOCAL_MEM_SIZE": "61184",
-    "SGLANG_ENABLE_TP_MEMORY_INBALANCE_CHECK": "0",
-    "ZBAL_NPU_ALLOC_CONF": "use_vmm_for_static_memory:True",
-    "SGLANG_ZBAL_BOOTSTRAP_URL": "tcp://127.0.0.1:24699",
-    "ZBAL_ENABLE_GRAPH": "1",
-    "ZBAL_HCCL_OP": "send,recv",                                                -> 去掉这行
-}
-
-DECODE_ENVS = {
-    "PYTORCH_NPU_ALLOC_CONF": "expandable_segments:True",
-    "SGLANG_SET_CPU_AFFINITY": "1",
-    "STREAMS_PER_DEVICE": "32",
-    "DEEP_NORMAL_MODE_USE_INT8_QUANT": "1",
-    "SGLANG_DISAGGREGATION_BOOTSTRAP_TIMEOUT": "60",
-    "HCCL_SOCKET_IFNAME": "lo",
-    "GLOO_SOCKET_IFNAME": "lo",
-    "HCCL_BUFFSIZE": "1200",
-    "SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK": "64",
-    "SGLANG_ENABLE_SPEC_V2": "1",
-    "SGLANG_ENABLE_OVERLAP_PLAN_STREAM": "1",
-    "SGLANG_NPU_USE_MLAPO": "1",
-    "SGLANG_NPU_USE_MULTI_STREAM": "1",
-}
-
-PREFILL_ARGS = [
-    "--quantization",
-    "modelslim",
-    "--dtype",
-    "bfloat16",
-    "--disaggregation-mode",
-    "prefill",
-    "--disaggregation-transfer-backend",
-    "ascend",
-    "--nnodes",
-    "1",
-    "--node-rank",
-    "0",
-    "--trust-remote-code",
-    "--attention-backend",
-    "ascend",
-    "--device",
-    "npu",
-    "--tp-size",
-    16,
-    "--disable-radix-cache",
-    "--disable-cuda-graph",
-    "--mem-fraction-static",
-    0.78,
-    "--max-running-requests",
-    1,
-    "--moe-a2a-backend",
-    "deepep",
-    "--deepep-mode",
-    "auto",
-    "--chunked-prefill-size",
-    16384,
-    "--prefill-max-requests",
-    1,
-    "--max-prefill-tokens",
-    131072,
-    "--enable-multimodal",
-    "--mm-attention-backend",
-    "ascend_attn",
-    "--sampling-backend",
-    "ascend",
-]
-
-DECODE_ARGS = [
-    "--quantization",
-    "modelslim",
-    "--dtype",
-    "bfloat16",
-    "--disaggregation-mode",
-    "decode",
-    "--disaggregation-transfer-backend",
-    "ascend",
-    "--nnodes",
-    "1",
-    "--trust-remote-code",
-    "--attention-backend",
-    "ascend",
-    "--device",
-    "npu",
-    "--tp-size",
-    16,
-    "--mem-fraction-static",
-    0.82,                                                                              -> 修改为 0.73
-    "--max-running-requests",
-    1,
-    "--enable-dp-attention",
-    "--dp-size",
-    1,
-    "--enable-dp-lm-head",
-    "--disable-radix-cache",
-    "--enable-multimodal",
-    "--mm-attention-backend",
-    "ascend_attn",
-    "--sampling-backend",
-    "ascend",
-    "--moe-a2a-backend",
-    "deepep",
-    "--deepep-mode",
-    "auto",
-    "--cuda-graph-bs",
-    1,
-    2,
-    4,
-    6,
-    8,
-    12,
-    16,
-                                                                                    -> 添加MTP
-                                                                                        --speculative-algorithm EAGLE3 \
-                                                                                        --speculative-draft-model-path $DRAFT_MODEL_PATH \
-                                                                                        --speculative-num-steps 3 \
-                                                                                        --speculative-eagle-topk 1 \
-                                                                                        --speculative-num-draft-tokens 4 \
-                                                                                        --speculative-draft-model-quantization unquant 
-]
-
-MODEL_CONFIG = {
-    "model_path": KIMI_K2_6_W4A8_MODEL_PATH,
-    "prefill_args": PREFILL_ARGS,
-    "decode_args": DECODE_ARGS,
-    "prefill_envs": PREFILL_ENVS,
-    "decode_envs": DECODE_ENVS,
-    "router_args": ["--policy", "cache_aware"],
-    "router_envs": {},
-}
-
-
-class TestNPUKimiK2_6_W4A8_1P1D_16p_In128k_Out1k_100ms(
-    TestAscendPerfMultiNodePdSepTestCaseBase
-):
-    """Test NPU performance for Kimi-K2.6-w4a8 1P+1D 16p: input_len=131072, output_len=1024, 0 cache, TPOT=100ms"""
-
-    model_config = MODEL_CONFIG
-    benchmark_tool = BENCHMARK_TOOL_DEFAULT
-    dataset_type = AISBENCHMARK_DATASET_DEFAULT
-    dataset_name = "random"
-    max_concurrency = 1
-    num_prompts = 1
-    request_rate = float("inf")
-    input_len = 131072                                                                  -> 调整至: 128000
-    output_len = 1024                                                                   -> 调整至: 1000
-    random_range_ratio = 1
-    tpot = 100
-    output_token_throughput = 21.41                                                     -> 可考虑调高至 24.26
-
-
-```
+修改项：--mem-fraction-static 0.82
 
 完整脚本：
 
@@ -221,7 +59,7 @@ do
             --host ${P_IP[$i]} --port 8100 --disaggregation-bootstrap-port $((8998+$i)) --nnodes 1 --node-rank 0 \
             --trust-remote-code --device npu --attention-backend ascend \
             --tp-size 16 --disable-radix-cache \
-            --mem-fraction-static 0.78 --max-running-requests 2 \
+            --mem-fraction-static 0.82 --max-running-requests 2 \
             --moe-a2a-backend deepep --deepep-mode auto \
             --chunked-prefill-size 16384 --prefill-max-requests 2 --max-prefill-tokens 65536 \
             --enable-multimodal --mm-attention-backend ascend_attn --sampling-backend ascend
@@ -342,5 +180,50 @@ Median ITL (ms):                         13.30
 P95 ITL (ms):                            17.88     
 P99 ITL (ms):                            52.14     
 Max ITL (ms):                            490.07    
+==================================================
+```
+
+
+---
+
+kimi 27
+
+``` 
+============ Serving Benchmark Result ============
+Backend:                                 sglang    
+Traffic request rate:                    inf       
+Max request concurrency:                 1         
+Successful requests:                     1         
+Benchmark duration (s):                  37.77     
+Total input tokens:                      128000    
+Total input text tokens:                 128000    
+Total generated tokens:                  1000      
+Total generated tokens (retokenized):    1000      
+Request throughput (req/s):              0.03      
+Input token throughput (tok/s):          3388.99   
+Output token throughput (tok/s):         26.48     
+Peak output token throughput (tok/s):    71.00     
+Peak concurrent requests:                1         
+Total token throughput (tok/s):          3415.46   
+Concurrency:                             1.00      
+----------------End-to-End Latency----------------
+Mean E2E Latency (ms):                   37765.22  
+Median E2E Latency (ms):                 37765.22  
+P90 E2E Latency (ms):                    37765.22  
+P99 E2E Latency (ms):                    37765.22  
+---------------Time to First Token----------------
+Mean TTFT (ms):                          23088.13  
+Median TTFT (ms):                        23088.13  
+P99 TTFT (ms):                           23088.13  
+-----Time per Output Token (excl. 1st token)------
+Mean TPOT (ms):                          14.69     
+Median TPOT (ms):                        14.69     
+P99 TPOT (ms):                           14.69     
+---------------Inter-Token Latency----------------
+Mean ITL (ms):                           14.69     
+Median ITL (ms):                         13.46     
+P95 ITL (ms):                            18.03     
+P99 ITL (ms):                            26.58     
+Max ITL (ms):                            78.50     
 ==================================================
 ```
