@@ -1,4 +1,4 @@
-修改项：--mem-fraction-static 0.82
+D节点修改项：--mem-fraction-static 0.82
 
 完整脚本：
 

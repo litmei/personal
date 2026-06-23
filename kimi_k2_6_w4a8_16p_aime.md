@@ -98,3 +98,22 @@ aime25 report table:
 │ Kimi-K2.6-w4a8 │ aime25    │ mean_acc │ default  │    30 │  0.9333 │ default │
 └────────────────┴───────────┴──────────┴──────────┴───────┴─────────┴─────────┘ 
 ```
+
+
+---
+
+kimi27
+
+``` 
+Evaluating[aime25]: 100%|██████████████████████████████████████████| 30/30 [22:24<00:00, 44.81s/it]
+2026-06-23 09:07:52 - evalscope - INFO: Unified pool finished for aime25.                          
+2026-06-23 09:07:52 - evalscope - INFO: Aggregating scores for subset: default                     
+2026-06-23 09:07:52 - evalscope - INFO: Generating report...                                       
+2026-06-23 09:07:52 - evalscope - INFO:                                                            
+aime25 report table:
+┌─────────────────────┬───────────┬──────────┬──────────┬───────┬─────────┬─────────┐
+│ Model               │ Dataset   │ Metric   │ Subset   │   Num │   Score │ Cat.0   │
+├─────────────────────┼───────────┼──────────┼──────────┼───────┼─────────┼─────────┤
+│ Kimi-K2.7-Code-w4a8 │ aime25    │ mean_acc │ default  │    30 │       1 │ default │
+└─────────────────────┴───────────┴──────────┴──────────┴───────┴─────────┴─────────┘ 
+```
