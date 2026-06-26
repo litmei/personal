@@ -59,7 +59,7 @@ do
             --host ${P_IP[$i]} --port 8100 --disaggregation-bootstrap-port $((8998+$i)) --nnodes 1 --node-rank 0 \
             --trust-remote-code --device npu --attention-backend ascend \
             --tp-size 16 --disable-radix-cache \
-            --mem-fraction-static 0.82 --max-running-requests 2 \
+            --mem-fraction-static 0.78 --max-running-requests 2 \
             --moe-a2a-backend deepep --deepep-mode auto \
             --chunked-prefill-size 16384 --prefill-max-requests 2 --max-prefill-tokens 65536 \
             --enable-multimodal --mm-attention-backend ascend_attn --sampling-backend ascend
@@ -92,7 +92,7 @@ do
             --disaggregation-mode decode --disaggregation-transfer-backend ascend \
             --host ${D_IP[$i]} --port 8111 --dist-init-addr ${D_IP[0]}:5000 --nnodes 1 --node-rank $i \
             --trust-remote-code --device npu --attention-backend ascend \
-            --tp-size 16 --mem-fraction-static 0.73 --max-running-requests 2 \
+            --tp-size 16 --mem-fraction-static 0.82 --max-running-requests 2 \
             --enable-dp-attention --dp-size 1 --enable-dp-lm-head \
             --disable-radix-cache \
             --enable-multimodal --mm-attention-backend ascend_attn --sampling-backend ascend \

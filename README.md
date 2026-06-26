@@ -1,4 +1,8 @@
-测试时使用的commit是：282c46133f66d1ae9c2021cba04dc7541526b978
+6月23日测试kimi2.7时使用的commit是：a17753e449fb4a33070de071942da9cff1e2010e
+
+---
+
+6月16日测试kimi2.6时使用的commit是：282c46133f66d1ae9c2021cba04dc7541526b978
 
 ---
 
