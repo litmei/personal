@@ -14,15 +14,16 @@ import requests
 # ▼▼▼  手动填写区域  ▼▼▼
 # ═══════════════════════════════════════════════════════
 
-model_repo_for_modelscope = "Eco-Tech/DeepSeek-V3.2-Exp-w4a8-mtp-QuaRot"
+# 填写例如 "Eco-Tech/DeepSeek-V3.2-Exp-w4a8-mtp-QuaRot" 的字符串repo
+model_repo_for_modelscope = None
 
 # 本地模型文件所在目录。
 #   - 填路径（如 "/data/models/DeepSeek-V3.2-Exp-w4a8-mtp-QuaRot"）→ 自动执行 sha256sum
-#     支持相对路径，比如 "./"
+#     默认值为 "./" 方便快速拷贝本文件后使用
 #   - 填 None → 使用下方 local_sha256_name_lines 手动粘贴的结果
-local_path = None
+local_path = "./"
 
-# 当 local_path = None 时，将 `sha256sum ./quant_*` 的输出粘贴到此处
+# 当 local_path = None 时，将 `sha256sum ./*.safetensors` 的输出粘贴到此处以生效，示例如下
 local_sha256_name_lines = r"""
 2703effcc3d695b64ca807ba6d6d3a4e605631713c825d2c60e44717041bb983  ./quant_model_weights-00083-of-00088.safetensors
 fcc74f5b5f4addc6720a390a5549ae0e7d18a500642b56a58268a33a93ea32fc  ./quant_model_weights-00084-of-00088.safetensors
@@ -38,6 +39,8 @@ PRINT_SHA = False
 # ═══════════════════════════════════════════════════════
 # ▲▲▲  手动填写区域结束  ▲▲▲
 # ═══════════════════════════════════════════════════════
+
+assert type(model_repo_for_modelscope) == str, "请手动补充模型repo在model_repo_for_modelscope顶参中"
 
 
 def should_check(filename: str) -> bool:
