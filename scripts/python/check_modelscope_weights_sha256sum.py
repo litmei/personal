@@ -34,11 +34,11 @@ e6fd2d7dc113bf3408c1b270953d2f56109b9d20e6f10abef2dd8801de8cf40a  ./quant_model_
 # 只比对特定后缀（设为 None 则比对所有文件）
 FILE_SUFFIX_FILTER = [".safetensors", ".json", ".txt", ".model"]
 
-PRINT_SHA = False
-
 # ═══════════════════════════════════════════════════════
 # ▲▲▲  手动填写区域结束  ▲▲▲
 # ═══════════════════════════════════════════════════════
+
+LONGEST_NAME_LEN = 0
 
 assert type(model_repo_for_modelscope) == str, "请手动补充模型repo在model_repo_for_modelscope顶参中"
 
@@ -51,6 +51,8 @@ def should_check(filename: str) -> bool:
 
 # ── 获取 ModelScope 远程 SHA256 ──────────────────────────
 def get_modelscope_sha() -> dict[str, str]:
+    global LONGEST_NAME_LEN
+
     print(f"[ModelScope] 正在获取文件列表: {model_repo_for_modelscope} ...")
 
     url = f"https://modelscope.cn/api/v1/models/{model_repo_for_modelscope}/repo/files"
@@ -67,6 +69,7 @@ def get_modelscope_sha() -> dict[str, str]:
         sha = f.get("Sha256", "")
         if sha and should_check(name):
             result[name] = sha.lower()
+            LONGEST_NAME_LEN = max(LONGEST_NAME_LEN, len(name))
 
     print(f"[ModelScope] 获取到 {len(result)} 个文件\n")
     return result
@@ -82,7 +85,7 @@ def compare_one(name: str, local_sha: str, remote_sha: dict[str, str]) -> str:
 
     remote_val = remote_sha[name]
     if local_sha == remote_val:
-        print(f"  ✅ OK: {name:<50} {local_sha}")
+        print(f"  ✅ OK: {name:<{LONGEST_NAME_LEN}}  {local_sha}")
         return "ok"
     else:
         print(f"  ❌ MISMATCH: {name}")
