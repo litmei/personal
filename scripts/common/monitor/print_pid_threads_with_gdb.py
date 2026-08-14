@@ -3,10 +3,10 @@
 进程/线程信息查看工具。
 
 用法:
-    python print_pid_info.py <pid> <package_name_0> [package_name_1, ...]
+    common print_pid_info.py <pid> <package_name_0> [package_name_1, ...]
 
 示例:
-    python print_pid_info.py 123456 mooncake zmq
+    common print_pid_info.py 123456 mooncake zmq
 
 功能:
     递归获取 PID 的所有 TID，展示 CPU 亲和、当前运行核、并通过 GDB 栈帧检测所属 package。
@@ -32,6 +32,12 @@ DEBUG_GDB = False
 SYMBOL_SEARCH_PATHS: List[str] = [
     # "/usr/local/python3.11.15/lib/python3.11/site-packages/mooncake",
 ]
+
+# =========================================================================
+# 获取
+# 这些路径下的 .so 文件会作为 GDB 的符号搜索路径
+# =========================================================================
+GDB_STACK_TIMEOUT = 120
 
 
 def _read_file(path: str) -> Optional[str]:
@@ -358,7 +364,7 @@ def run_tree(pid: int, packages: List[str]):
 def main():
     parser = argparse.ArgumentParser(
         description="进程/线程信息查看工具",
-        usage="python print_pid_info.py <pid> <package_name_0> [package_name_1 ...]",
+        usage="common print_pid_info.py <pid> <package_name_0> [package_name_1 ...]",
     )
     parser.add_argument("pid", type=int, help="目标进程 PID")
     parser.add_argument("packages", nargs="+", help="要检测的 package 名称，如 mooncake zmq")
