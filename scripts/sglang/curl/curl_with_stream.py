@@ -1,3 +1,13 @@
+"""
+有什么用？
+实现了一个流式curl命令，可以不断实时追加新的打印，方便及时观察到curl结果中存在的问题
+
+如何使用？
+1. 修改本文件的前面的prompt、url、max_new_tokens
+2. 直接运行本脚本 python xx.py
+3. 如果还有什么需要配置的，比如连接超时，就具体根据下面的代码去修改了
+"""
+
 import json
 import sys
 import time

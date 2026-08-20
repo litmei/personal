@@ -1,5 +1,10 @@
 """
+有什么用？
 比对 ModelScope 与 HuggingFace 上同一模型的文件 SHA256 一致性。
+
+如何使用？
+1. 按照下方“手动填写区域”的指示完成配置
+2. 运行该脚本 python xx.py
 
 依赖：
     pip install requests huggingface_hub
