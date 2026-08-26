@@ -7,7 +7,7 @@
 # 3. 运行脚本 bash xx.sh
 
 # A3 设备脚本
-docker run -itd --name sgl-xjw-c9 --shm-size=16g \
+docker run -itd --name sgl-xjw --shm-size=16g \
     --privileged=true --net=host \
     -v /mnt:/mnt -v /home:/home -v /data:/data \
     -v /var/queue_schedule:/var/queue_schedule \
@@ -43,4 +43,23 @@ exit 0
 
 
 # A5 设备脚本
-# todo
+docker run -itd --name sgl-xjw --shm-size=16g \
+    --privileged=true --net=host \
+    -v /mnt:/mnt -v /home:/home -v /data:/data \
+    -v /var/queue_schedule:/var/queue_schedule \
+    -v /etc/ascend_install.info:/etc/ascend_install.info \
+    -v /usr/local/sbin:/usr/local/sbin \
+    -v /usr/local/Ascend/driver:/usr/local/Ascend/driver \
+    -v /usr/local/Ascend/firmware:/usr/local/Ascend/firmware \
+    --device=/dev/davinci0:/dev/davinci0 \
+    --device=/dev/davinci1:/dev/davinci1 \
+    --device=/dev/davinci2:/dev/davinci2 \
+    --device=/dev/davinci3:/dev/davinci3 \
+    --device=/dev/davinci4:/dev/davinci4 \
+    --device=/dev/davinci5:/dev/davinci5 \
+    --device=/dev/davinci6:/dev/davinci6 \
+    --device=/dev/davinci7:/dev/davinci7 \
+    --device=/dev/davinci_manager:/dev/davinci_manager \
+    --device=/dev/hisi_hdc:/dev/hisi_hdc \
+    --entrypoint=bash \
+    swr.cn-southwest-2.myhuaweicloud.com/base_image/dockerhub/lmsysorg/sglang:cann9.1.0-950-20260913
