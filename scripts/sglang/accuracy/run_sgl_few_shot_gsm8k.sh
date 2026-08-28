@@ -9,7 +9,7 @@
 
 # wget https://raw.githubusercontent.com/openai/grade-school-math/master/grade_school_math/data/test.jsonl
 # mv test.jsonl gsm8k.jsonl
-# export PYTHONPATH=/home/xjw/code/sglang/common:$PYTHONPATH
+# export PYTHONPATH=/home/xjw/code/sglang/python:$PYTHONPATH
 python3 -m sglang.test.few_shot_gsm8k \
   --num-questions 200 \
   --num-shots 2 \
