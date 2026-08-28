@@ -1,4 +1,6 @@
 """
+echo "错误：请使用 python 而不是 bash 运行此脚本！" >&2; exit 1
+
 有什么用？
 比对 ModelScope 与 HuggingFace 上同一模型的文件 SHA256 一致性。
 
