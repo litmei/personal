@@ -34,6 +34,7 @@ docker run -itd --name sgl-xjw --shm-size=16g \
     --device=/dev/davinci_manager:/dev/davinci_manager \
     --device=/dev/hisi_hdc:/dev/hisi_hdc \
     --entrypoint=bash \
+    -w /home/xjw \
     swr.cn-southwest-2.myhuaweicloud.com/base_image/dockerhub/lmsysorg/sglang:cann9.0.0-a3-20260602
 
 exit 0
@@ -62,4 +63,8 @@ docker run -itd --name sgl-xjw --shm-size=16g \
     --device=/dev/davinci_manager:/dev/davinci_manager \
     --device=/dev/hisi_hdc:/dev/hisi_hdc \
     --entrypoint=bash \
+    -w /home/xjw \
     swr.cn-southwest-2.myhuaweicloud.com/base_image/dockerhub/lmsysorg/sglang:cann9.1.0-950-20260913
+
+
+# H20 设备脚本

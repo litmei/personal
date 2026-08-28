@@ -16,5 +16,5 @@ python3 -m sglang.test.few_shot_gsm8k \
   --data-path ./gsm8k.jsonl \
   --max-new-tokens 512 \
   --parallel 200 \
-  --host 0.0.0.0 \
-  --port 30000
+  --host 127.0.0.1 \
+  --port 8880

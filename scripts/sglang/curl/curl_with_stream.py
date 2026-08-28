@@ -17,7 +17,7 @@ import requests
 p = "请介绍秦始皇派蒙"
 
 prompt_text = p
-url = "http://127.0.0.1:8199/generate"
+url = "http://127.0.0.1:8880/generate"
 temperature = 0
 max_new_tokens = 3000
 

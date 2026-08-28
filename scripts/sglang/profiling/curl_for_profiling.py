@@ -2,7 +2,7 @@
 import requests
 from datetime import datetime
 
-SERVER = "http://0.0.0.0:6677"
+SERVER = "http://127.0.0.1:8880"
 BASE_DIR = "/mnt/share/xjw/prof"
 TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M%S")
 PROFILE_DIR = f"{BASE_DIR}/prof_{TIMESTAMP}"
@@ -14,7 +14,7 @@ payload = {
     "record_shapes": True,
     "profile_memory": True,
     "with_stack": False,
-    "profile_prefix": "glm52-",
+    "profile_prefix": "prof-",
 }
 
 url = f"{SERVER}/start_profile"
