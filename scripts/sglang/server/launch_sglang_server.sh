@@ -112,4 +112,4 @@ ARGS=(
 )
 
 
-sglang serve "${ARGS[@]}"
+python3 -m sglang.launch_server "${ARGS[@]}"
