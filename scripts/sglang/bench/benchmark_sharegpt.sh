@@ -1,5 +1,5 @@
 # modelscope download --dataset gliang1001/ShareGPT_V3_unfiltered_cleaned_split ShareGPT_V3_unfiltered_cleaned_split.json --local_dir ./
-# export PYTHONPATH=/home/xjw/code/sglang/common:$PYTHONPATH
+# export PYTHONPATH=/home/xjw/code/sglang/python:$PYTHONPATH
 python3 -m sglang.bench_serving \
 	--dataset-name random \
 	--apply-chat-template \
