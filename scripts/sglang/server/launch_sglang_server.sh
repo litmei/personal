@@ -30,6 +30,7 @@ export PYTORCH_NPU_ALLOC_CONF=expandable_segments:True
 export STREAMS_PER_DEVICE=32
 export TASK_QUEUE_ENABLE=0
 export SGLANG_NPU_USE_MULTI_STREAM=1
+export SGLANG_ENABLE_OVERLAP_PLAN_STREAM=1
 
 ## [net]
 export HCCL_SOCKET_IFNAME=lo
@@ -45,11 +46,6 @@ export SGLANG_NPU_USE_MLAPO=1
 export SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK=35
 # export SGLANG_DEEPEP_BF16_DISPATCH=1
 # export DEEP_USE_MODE=allgather
-
-## [MTP]
-export SGLANG_ENABLE_SPEC_V2=1
-export SGLANG_ENABLE_OVERLAP_PLAN_STREAM=1
-export SGLANG_SPEC_V2_ZERO_BUBBLE=1
 
 ## [zbal]
 # export HCCL_BUFFSIZE=0
@@ -109,6 +105,8 @@ ARGS=(
   --prefill-delayer-max-delay-passes 200
   --enable-prefill-delayer
   --model-loader-extra-config '{"enable_multithread_load": true}'
+  --enable-spec-v2-zero-bubble
+  --skip-spec-v2-zero-bubble-seq-lens-cpu-sync
 )
 
 
