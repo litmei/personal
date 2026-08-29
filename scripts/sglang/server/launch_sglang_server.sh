@@ -1,19 +1,19 @@
-# export PYTHONPATH=/home/xjw/code/sglang/python:$PYTHONPATH
+#export PYTHONPATH=/home/xjw/code/sglang/python:$PYTHONPATH
 
 MODEL_PATH=/home/weights/Kimi-K2.6-w4a8
 DRAFT_MODEL_PATH=/home/weights/kimi-k2.6-eagle3
 
-# source /usr/local/Ascend/ascend-toolkit/set_env.sh
-# source /usr/local/Ascend/nnal/atb/set_env.sh
+#source /usr/local/Ascend/ascend-toolkit/set_env.sh
+#source /usr/local/Ascend/nnal/atb/set_env.sh
 
 unset http_proxy https_proxy all_proxy HTTP_PROXY HTTPS_PROXY ALL_PROXY
 unset ASCEND_LAUNCH_BLOCKING
 
 ## [cpu]
-echo performance | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
-sysctl -w vm.swappiness=10
-sysctl -w kernel.numa_balancing=0
-sysctl -w kernel.sched_migration_cost_ns=50000
+#echo performance | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+#sysctl -w vm.swappiness=10
+#sysctl -w kernel.numa_balancing=0
+#sysctl -w kernel.sched_migration_cost_ns=50000
 export SGLANG_SET_CPU_AFFINITY=1
 
 ## [hccl]
@@ -31,6 +31,7 @@ export STREAMS_PER_DEVICE=32
 export TASK_QUEUE_ENABLE=0
 export SGLANG_NPU_USE_MULTI_STREAM=1
 export SGLANG_ENABLE_OVERLAP_PLAN_STREAM=1
+#export ASCEND_RT_VISIBLE_DEVICES=0,1,2,3
 
 ## [net]
 export HCCL_SOCKET_IFNAME=lo
@@ -44,19 +45,19 @@ export SGLANG_NPU_USE_MLAPO=1
 
 ## [DeepEP]
 export SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK=35
-# export SGLANG_DEEPEP_BF16_DISPATCH=1
-# export DEEP_USE_MODE=allgather
+#export SGLANG_DEEPEP_BF16_DISPATCH=1
+#export DEEP_USE_MODE=allgather
 
 ## [zbal]
-# export HCCL_BUFFSIZE=0
-# unset PYTORCH_NPU_ALLOC_CONF
-# export SGLANG_ZBAL_LOCAL_MEM_SIZE=80000
-# export SGLANG_ENABLE_TP_MEMORY_INBALANCE_CHECK=0
+#export HCCL_BUFFSIZE=0
+#unset PYTORCH_NPU_ALLOC_CONF
+#export SGLANG_ZBAL_LOCAL_MEM_SIZE=80000
+#export SGLANG_ENABLE_TP_MEMORY_INBALANCE_CHECK=0
 ## [zbal if use mix alloc]
-# export PYTORCH_NPU_ALLOC_CONF=expandable_segments:True
-# export ZBAL_NPU_ALLOC_CONF=use_vmm_for_static_memory:True
+#export PYTORCH_NPU_ALLOC_CONF=expandable_segments:True
+#export ZBAL_NPU_ALLOC_CONF=use_vmm_for_static_memory:True
 ## [zbal if support graph]
-# export ZBAL_ENABLE_GRAPH=1
+#export ZBAL_ENABLE_GRAPH=1
 
 
 ARGS=(
@@ -91,7 +92,9 @@ ARGS=(
   --quantization modelslim
 
 ## [GRAPH]
-  --cuda-graph-bs 1 2 4 8 11
+#  --disable-cuda-graph
+#  --cuda-graph-bs-prefill 1 2 4 8 16
+  --cuda-graph-bs-decode 1 2 4 8 16
 
 ## [MTP]
   --speculative-algorithm EAGLE3
