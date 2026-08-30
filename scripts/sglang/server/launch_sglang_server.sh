@@ -123,8 +123,8 @@ ARGS=(
   --prefill-delayer-max-delay-passes 200
   --enable-prefill-delayer
   --model-loader-extra-config '{"enable_multithread_load": true}'
-  --enable-spec-v2-zero-bubble
-  --skip-spec-v2-zero-bubble-seq-lens-cpu-sync
+  --enable-draft-prefetch
+  --skip-draft-prefetch-seq-lens-cpu-sync
 )
 
 
