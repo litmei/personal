@@ -33,6 +33,13 @@ export SGLANG_NPU_USE_MULTI_STREAM=1
 export SGLANG_ENABLE_OVERLAP_PLAN_STREAM=1
 #export ASCEND_RT_VISIBLE_DEVICES=0,1,2,3
 
+## [pd disaggregation]
+#export MEMFABRIC_HYBRID_EXTEND_LIB_PATH=
+#export MF_CONFIG_STORE_URL="tcp://127.0.0.1:24669"
+## [pd A5]
+#export MF_HYBM_USE_VMM_SEGMENT=1
+#export ASCEND_MF_TRANSFER_PROTOCOL=device_urma
+
 ## [net]
 export HCCL_SOCKET_IFNAME=lo
 export GLOO_SOCKET_IFNAME=lo
@@ -83,6 +90,14 @@ ARGS=(
   --moe-a2a-backend deepep
   --deepep-mode auto
 
+## [pd disaggregation]
+#  --disaggregation-transfer-backend ascend
+## [prefill]
+#  --disaggregation-mode prefill
+#  --disaggregation-bootstrap-port 8998
+## [decode]
+#  --disaggregation-mode decode
+
 ## [MM]
 #  --enable-multimodal
 #  --mm-attention-backend ascend_attn
@@ -114,3 +129,13 @@ ARGS=(
 
 
 python3 -m sglang.launch_server "${ARGS[@]}"
+
+
+exit 0
+## [pd disaggregation router]
+python -m sglang_router.launch_router \
+	--pd-disaggregation --policy cache_aware \
+	--prefill http://127.0.0.1:8100 8998 \
+	--decode http://127.0.0.1:8101 \
+	--host 127.0.0.1 --port 8880 \
+	--mini-lb
