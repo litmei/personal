@@ -152,8 +152,8 @@ ARGS=(
 
 ## [GRAPH]
 #  --disable-cuda-graph  # 已弃用
-  --cuda-graph-backend-prefill=disabled
-#  --cuda-graph-backend-decode=disabled
+  --cuda-graph-backend-prefill disabled
+#  --cuda-graph-backend-decode disabled
 #  --cuda-graph-bs-prefill 1 2 4 8 16
   --cuda-graph-bs-decode 1 2 4 8 16
 
