@@ -17,6 +17,7 @@ echo "错误：请使用 python 而不是 bash 运行此脚本！" >&2; exit 1
 支持两种权重形式（自动识别 index 文件名）：
 - bf16: model.safetensors.index.json
 - w8a8 量化: quant_model_weights.safetensors.index.json
+  （若存在 quant_model_description.json 量化描述文件，会随层数同步裁剪其中的权重项）
 
 依赖：
 无（仅 Python 标准库）
@@ -72,18 +73,50 @@ def restore_or_backup(path):
         shutil.copy2(path, bak)
 
 
+def cut_layer_entries(entries, orig_layers, dst_layers):
+    """按裁剪规则过滤 {名称: 值} 映射（index 的 weight_map / 量化描述的权重项通用）：
+    - 非 layer 权重与 layer id < dst_layers 的项保留
+    - layer id 在 [dst_layers, orig_layers) 的项删除
+    - nextn 层（layer id == 原始 num_hidden_layers）保留，layer id 改为 dst_layers
+    返回 (新映射, 删除数, 重命名数)"""
+    new_entries = {}
+    dropped = renamed = 0
+    for key, value in entries.items():
+        lid = parse_layer_id(key)
+        if lid is None or lid < dst_layers:
+            new_entries[key] = value
+        elif lid == orig_layers:
+            new_entries[LAYER_PREFIX + str(dst_layers) + key[len(LAYER_PREFIX) + len(str(lid)):]] = value
+            renamed += 1
+        else:
+            dropped += 1
+    return new_entries, dropped, renamed
+
+
+def report_cut(tag, total, dropped, renamed, orig_layers, dst_layers):
+    if renamed:
+        print(f"[{tag}] 删除被裁剪层权重 {dropped} 项，nextn 层 {renamed} 项重命名为 layer {dst_layers}，共剩余 {total} 项")
+    else:
+        print(f"[{tag}] 未发现 nextn 层（layer {orig_layers}），仅删除被裁剪层权重 {dropped} 项，共剩余 {total} 项")
+
+
 def update_num_layers(model_dir, dst_layers):
     """update 模式核心逻辑（step4.1 ~ step4.3），修改 model_dir 下的裁剪层数"""
     if not isinstance(dst_layers, int) or isinstance(dst_layers, bool) or dst_layers <= 0:
         fail(f"DST_LAYERS 必须是正整数，当前为: {dst_layers!r}")
     config_path = os.path.join(model_dir, "config.json")
     index_path = find_index_path(model_dir)
+    # w8a8 量化目录下还有 quant_model_description.json（每个权重的量化 dtype 描述），也需要同步裁剪
+    desc_path = os.path.join(model_dir, "quant_model_description.json")
+    has_desc = os.path.isfile(desc_path)
     if not os.path.isfile(config_path):
         fail(f"缺少文件: {config_path}")
 
-    # step4.1: 还原 / 备份 config.json 与 safetensors index
+    # step4.1: 还原 / 备份 config.json、safetensors index（及量化描述文件）
     restore_or_backup(config_path)
     restore_or_backup(index_path)
+    if has_desc:
+        restore_or_backup(desc_path)
 
     # step4.2: 修改 config.json
     with open(config_path, encoding="utf-8") as f:
@@ -104,28 +137,23 @@ def update_num_layers(model_dir, dst_layers):
     # step4.3: 修改 safetensors index
     with open(index_path, encoding="utf-8") as f:
         index = json.load(f)
-    weight_map = index["weight_map"]
-
-    new_map = {}
-    dropped = renamed = 0
-    for key, shard in weight_map.items():
-        lid = parse_layer_id(key)
-        if lid is None or lid < dst_layers:
-            new_map[key] = shard
-        elif lid == orig_layers:
-            # nextn 层（layer id == 原始 num_hidden_layers）：保留，layer id 改为 dst_layers
-            new_map[LAYER_PREFIX + str(dst_layers) + key[len(LAYER_PREFIX) + len(str(lid)):]] = shard
-            renamed += 1
-        else:
-            dropped += 1
+    new_map, dropped, renamed = cut_layer_entries(index["weight_map"], orig_layers, dst_layers)
     index["weight_map"] = new_map
     with open(index_path, "w", encoding="utf-8") as f:
         json.dump(index, f, indent=2, ensure_ascii=False, sort_keys=True)
         f.write("\n")
-    if renamed:
-        print(f"[step4.3] 删除被裁剪层权重 {dropped} 项，nextn 层 {renamed} 项重命名为 layer {dst_layers}，共剩余 {len(new_map)} 项")
-    else:
-        print(f"[提示] 未发现 nextn 层（layer {orig_layers}），仅删除被裁剪层权重 {dropped} 项，共剩余 {len(new_map)} 项")
+    report_cut("step4.3", len(new_map), dropped, renamed, orig_layers, dst_layers)
+
+    # step4.4: 修改 quant_model_description.json（仅 w8a8 目录存在）
+    # 权重项按同样规则裁剪；version/model_quant_type/metadata 等非 layer 键自动保留
+    if has_desc:
+        with open(desc_path, encoding="utf-8") as f:
+            desc = json.load(f)
+        new_desc, dropped, renamed = cut_layer_entries(desc, orig_layers, dst_layers)
+        with open(desc_path, "w", encoding="utf-8") as f:
+            json.dump(new_desc, f, indent=2, ensure_ascii=False)
+            f.write("\n")
+        report_cut("step4.4", len(new_desc), dropped, renamed, orig_layers, dst_layers)
 
 
 def run_init():
