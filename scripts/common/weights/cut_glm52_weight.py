@@ -11,16 +11,20 @@ echo "错误：请使用 python 而不是 bash 运行此脚本！" >&2; exit 1
    - "init"  首次使用：软链接/拷贝 SRC 权重到 DST，并将本脚本自身拷贝到 DST
              （副本的模式会被改为 "update"），随后代跑一次 update 逻辑
    - "update" 修改层数：根据 DST_LAYERS 修改 DST_MODEL_PATH 下的
-             config.json 与 model.safetensors.index.json（可反复运行，幂等）
+             config.json 与 safetensors index（可反复运行，幂等）
              用法：在 DST 目录下的脚本副本中改好 DST_LAYERS 后运行
+
+支持两种权重形式（自动识别 index 文件名）：
+- bf16: model.safetensors.index.json
+- w8a8 量化: quant_model_weights.safetensors.index.json
 
 依赖：
 无（仅 Python 标准库）
 """
 
 # ==================== 手动填写区域 ====================
-SRC_MODEL_PATH = r"/home/litmei/workspace/weights/demo/src"
-DST_MODEL_PATH = r"/home/litmei/workspace/weights/demo/dst"
+SRC_MODEL_PATH = r"/home/litmei/workspace/weights/demo_w8a8"
+DST_MODEL_PATH = r"/home/litmei/workspace/weights/demo_w8a8_dst"
 DST_LAYERS = 10
 SCRIPT_MODE = "init"  # "update"
 # =====================================================
@@ -47,6 +51,16 @@ def parse_layer_id(key):
     return int(seg) if seg.isdigit() else None
 
 
+def find_index_path(model_dir):
+    # 自动识别 safetensors index 文件：
+    #   bf16: model.safetensors.index.json / w8a8: quant_model_weights.safetensors.index.json
+    # （*.bak 备份文件以 .bak 结尾，不会被误匹配）
+    candidates = sorted(n for n in os.listdir(model_dir) if n.endswith(".safetensors.index.json"))
+    if len(candidates) != 1:
+        fail(f"在 {model_dir} 下应恰好有一个 *.safetensors.index.json，实际找到: {candidates}")
+    return os.path.join(model_dir, candidates[0])
+
+
 def restore_or_backup(path):
     # step4.1: 有 .bak 则用 .bak 覆盖当前文件（还原到原始版本）；没有则把当前文件备份为 .bak
     bak = path + ".bak"
@@ -63,12 +77,11 @@ def update_num_layers(model_dir, dst_layers):
     if not isinstance(dst_layers, int) or isinstance(dst_layers, bool) or dst_layers <= 0:
         fail(f"DST_LAYERS 必须是正整数，当前为: {dst_layers!r}")
     config_path = os.path.join(model_dir, "config.json")
-    index_path = os.path.join(model_dir, "model.safetensors.index.json")
-    for path in (config_path, index_path):
-        if not os.path.isfile(path):
-            fail(f"缺少文件: {path}")
+    index_path = find_index_path(model_dir)
+    if not os.path.isfile(config_path):
+        fail(f"缺少文件: {config_path}")
 
-    # step4.1: 还原 / 备份 config.json 与 model.safetensors.index.json
+    # step4.1: 还原 / 备份 config.json 与 safetensors index
     restore_or_backup(config_path)
     restore_or_backup(index_path)
 
@@ -88,7 +101,7 @@ def update_num_layers(model_dir, dst_layers):
         f.write("\n")
     print(f"[step4.2] num_hidden_layers: {orig_layers} -> {dst_layers}")
 
-    # step4.3: 修改 model.safetensors.index.json
+    # step4.3: 修改 safetensors index
     with open(index_path, encoding="utf-8") as f:
         index = json.load(f)
     weight_map = index["weight_map"]
