@@ -1,0 +1,38 @@
+scripts/common/weights/cut_glm52_weight.py
+  s_03ef54a0adca4b::t_78ab99441ba8ca 76-102,109-111,115,118-119,140,145-156
+  s_03ef54a0adca4b::t_210075252f8a38 20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.2",
+  "base_commit_sha": "9df6d19690babe674777701a330f08532d69e36b",
+  "prompts": {},
+  "humans": {
+    "h_f230c8c48a99ed": {
+      "author": "Kurkur <mccllm@qq.com>"
+    }
+  },
+  "sessions": {
+    "s_03ef54a0adca4b": {
+      "agent_id": {
+        "tool": "trae",
+        "id": "6a9e3089b7f3a2b969c73f69",
+        "model": "glm-5.3"
+      },
+      "human_author": "Kurkur <mccllm@qq.com>",
+      "custom_attributes": {
+        "client_type": "ide",
+        "tool_id": "icube:applyChatSnapshotPatch",
+        "external_session_id": "6a9e3089b7f3a2b969c73f69",
+        "session_id": "6a9e3089b7f3a2b969c73f69",
+        "edit_kind": "file_edit",
+        "tool_type": "builtin",
+        "runtime_client": "trae-tob-git-ai",
+        "operation_id": "6a9e3aa7b7f3a2b969c7402b",
+        "tool_use_id": "6a9e3aa7b7f3a2b969c7402b",
+        "dedupe_key": "6a9e3089b7f3a2b969c73f69:6a9e3aa7b7f3a2b969c7402b:afterEdit:2d8699a9",
+        "source_scene": "agent"
+      }
+    }
+  }
+}
