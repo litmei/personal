@@ -1,0 +1,271 @@
+scripts/sglang/server/launch_sglang_server_pd_disaggregation.sh
+  s_ef1fa94ea8c7db::t_dbad3a8f52df54 23
+  s_08b41cc2d9e1e0::t_3254c6768ad52b 229
+  s_b9cb85019ad39d::t_8c1caa38d7f383 18
+  s_61855d0f3ffca5::t_52854a7cf534c3 19
+  h_f230c8c48a99ed 69,87-97,130-131,170,179,186,201,332
+  s_555e4f8c1d1040::t_ce1f85f58d1146 10-11
+  s_0e033af31d263c::t_9f019bf99977c0 147
+  s_3cc2808d54eb35::t_36e0d18072944a 165,181
+  s_03ef54a0adca4b::t_618db5d07bfda1 199,340-346
+  s_a1a2ae3ce7fb60::t_7d85bcf65e4ed4 8,12,256,316,331
+  s_30699ceb32641c::t_ea4dd99eb81793 333-335
+  s_03ef54a0adca4b::t_56fc3b6f7a7a0f 109,111,152-158,171,180,187-189,202,204,259,261,319,321,347
+  s_2ff83eab09e3bb::t_33fe7161fd3a1c 225
+  s_cfd4df824939a6::t_42b98e7a156b27 164
+  s_be07a0509c678f::t_d820b29b85e518 242,296
+  s_03ef54a0adca4b::t_e07040db7a1bce 38-67,70-85
+  s_ca16375b2987d4::t_dbd704f7486955 280-285
+  s_04c6bbd886848e::t_1f4472325a8d71 146
+  s_a1a2ae3ce7fb60::t_518bd921a1126c 5-7
+  s_03ef54a0adca4b::t_125440ed5d25b9 110
+  s_03ef54a0adca4b::t_588b9a3be4745e 190-192,196-198
+  s_03ef54a0adca4b::t_540f8b95138528 203
+  s_03ef54a0adca4b::t_90f635771589b4 260
+  s_03ef54a0adca4b::t_2c044f26dfa3d8 320
+  s_03ef54a0adca4b::t_d252e109819d11 348-350
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.2",
+  "base_commit_sha": "dea1c5a5fc974b9999eabbf120413f4706c1ed10",
+  "prompts": {},
+  "humans": {
+    "h_f230c8c48a99ed": {
+      "author": "Kurkur <mccllm@qq.com>"
+    }
+  },
+  "sessions": {
+    "s_03ef54a0adca4b": {
+      "agent_id": {
+        "tool": "trae",
+        "id": "6a9e3089b7f3a2b969c73f69",
+        "model": "DeepSeek-V4-Flash-Official"
+      },
+      "human_author": "Kurkur <mccllm@qq.com>",
+      "custom_attributes": {
+        "operation_id": "6aa0deff0aef88af93ac4be8",
+        "dedupe_key": "6a9e3089b7f3a2b969c73f69:6aa0deff0aef88af93ac4be8:afterEdit:9c333ecb",
+        "tool_type": "builtin",
+        "tool_id": "icube:applyChatSnapshotPatch",
+        "session_id": "6a9e3089b7f3a2b969c73f69",
+        "external_session_id": "6a9e3089b7f3a2b969c73f69",
+        "source_scene": "agent",
+        "edit_kind": "file_edit",
+        "runtime_client": "trae-tob-git-ai",
+        "client_type": "ide",
+        "tool_use_id": "6aa0deff0aef88af93ac4be8"
+      }
+    },
+    "s_04c6bbd886848e": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-8ec06e52-f577-4fdc-9aa1-7c7614fa8bb5",
+        "model": "default"
+      },
+      "human_author": "Kurkur <mccllm@qq.com>",
+      "custom_attributes": {
+        "edit_kind": "file_edit",
+        "tool": "trae-cue",
+        "client_type": "ide",
+        "source_scene": "cue",
+        "external_session_id": "icr-8ec06e52-f577-4fdc-9aa1-7c7614fa8bb5"
+      }
+    },
+    "s_08b41cc2d9e1e0": {
+      "agent_id": {
+        "tool": "trae-code-edit",
+        "id": "ai_tab-202609091212530100031581275276AAF",
+        "model": "default"
+      },
+      "human_author": "Kurkur <mccllm@qq.com>",
+      "custom_attributes": {
+        "edit_kind": "file_edit",
+        "client_type": "ide",
+        "tool": "trae-code-edit",
+        "external_session_id": "202609091212530100031581275276AAF",
+        "source_scene": "cue"
+      }
+    },
+    "s_0e033af31d263c": {
+      "agent_id": {
+        "tool": "trae-code-edit",
+        "id": "ai_tab-2026090912011901000315721945451FB",
+        "model": "default"
+      },
+      "human_author": "Kurkur <mccllm@qq.com>",
+      "custom_attributes": {
+        "source_scene": "cue",
+        "external_session_id": "2026090912011901000315721945451FB",
+        "tool": "trae-code-edit",
+        "client_type": "ide",
+        "edit_kind": "file_edit"
+      }
+    },
+    "s_2ff83eab09e3bb": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-c2949122-1dd3-4b41-8d3c-1cd98e09a126",
+        "model": "default"
+      },
+      "human_author": "Kurkur <mccllm@qq.com>",
+      "custom_attributes": {
+        "tool": "trae-cue",
+        "client_type": "ide",
+        "source_scene": "cue",
+        "external_session_id": "icr-c2949122-1dd3-4b41-8d3c-1cd98e09a126",
+        "edit_kind": "file_edit"
+      }
+    },
+    "s_30699ceb32641c": {
+      "agent_id": {
+        "tool": "trae-code-edit",
+        "id": "ai_tab-20260909121823010003158125652A78F",
+        "model": "default"
+      },
+      "human_author": "Kurkur <mccllm@qq.com>",
+      "custom_attributes": {
+        "edit_kind": "file_edit",
+        "tool": "trae-code-edit",
+        "external_session_id": "20260909121823010003158125652A78F",
+        "client_type": "ide",
+        "source_scene": "cue"
+      }
+    },
+    "s_3cc2808d54eb35": {
+      "agent_id": {
+        "tool": "trae-code-edit",
+        "id": "ai_tab-202609091206410100002060240459419",
+        "model": "default"
+      },
+      "human_author": "Kurkur <mccllm@qq.com>",
+      "custom_attributes": {
+        "source_scene": "cue",
+        "client_type": "ide",
+        "external_session_id": "202609091206410100002060240459419",
+        "edit_kind": "file_edit",
+        "tool": "trae-code-edit"
+      }
+    },
+    "s_555e4f8c1d1040": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-4e8376fe-54ec-468f-92c7-5e5ccd59f846",
+        "model": "default"
+      },
+      "human_author": "Kurkur <mccllm@qq.com>",
+      "custom_attributes": {
+        "edit_kind": "file_edit",
+        "tool": "trae-cue",
+        "external_session_id": "icr-4e8376fe-54ec-468f-92c7-5e5ccd59f846",
+        "source_scene": "cue",
+        "client_type": "ide"
+      }
+    },
+    "s_61855d0f3ffca5": {
+      "agent_id": {
+        "tool": "trae-code-edit",
+        "id": "ai_tab-20260909115401010000020030983C1BA",
+        "model": "default"
+      },
+      "human_author": "Kurkur <mccllm@qq.com>",
+      "custom_attributes": {
+        "edit_kind": "file_edit",
+        "external_session_id": "20260909115401010000020030983C1BA",
+        "source_scene": "cue",
+        "client_type": "ide",
+        "tool": "trae-code-edit"
+      }
+    },
+    "s_a1a2ae3ce7fb60": {
+      "agent_id": {
+        "tool": "trae-code-edit",
+        "id": "ai_tab-20260909121827010000082004002B044",
+        "model": "default"
+      },
+      "human_author": "Kurkur <mccllm@qq.com>",
+      "custom_attributes": {
+        "client_type": "ide",
+        "source_scene": "cue",
+        "external_session_id": "20260909121827010000082004002B044",
+        "edit_kind": "file_edit",
+        "tool": "trae-code-edit"
+      }
+    },
+    "s_b9cb85019ad39d": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-d496fafd-4fd3-4a2c-9755-53e8477d966a",
+        "model": "default"
+      },
+      "human_author": "Kurkur <mccllm@qq.com>",
+      "custom_attributes": {
+        "edit_kind": "file_edit",
+        "tool": "trae-cue",
+        "source_scene": "cue",
+        "client_type": "ide",
+        "external_session_id": "icr-d496fafd-4fd3-4a2c-9755-53e8477d966a"
+      }
+    },
+    "s_be07a0509c678f": {
+      "agent_id": {
+        "tool": "trae-code-edit",
+        "id": "ai_tab-202609091214090100031581279182889",
+        "model": "default"
+      },
+      "human_author": "Kurkur <mccllm@qq.com>",
+      "custom_attributes": {
+        "client_type": "ide",
+        "source_scene": "cue",
+        "tool": "trae-code-edit",
+        "external_session_id": "202609091214090100031581279182889",
+        "edit_kind": "file_edit"
+      }
+    },
+    "s_ca16375b2987d4": {
+      "agent_id": {
+        "tool": "trae-code-edit",
+        "id": "ai_tab-2026090912181701000315815131310E4",
+        "model": "default"
+      },
+      "human_author": "Kurkur <mccllm@qq.com>",
+      "custom_attributes": {
+        "edit_kind": "file_edit",
+        "tool": "trae-code-edit",
+        "client_type": "ide",
+        "external_session_id": "2026090912181701000315815131310E4",
+        "source_scene": "cue"
+      }
+    },
+    "s_cfd4df824939a6": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-30882858-ba63-4cd8-918a-d2213bb1da7f",
+        "model": "default"
+      },
+      "human_author": "Kurkur <mccllm@qq.com>",
+      "custom_attributes": {
+        "client_type": "ide",
+        "source_scene": "cue",
+        "edit_kind": "file_edit",
+        "external_session_id": "icr-30882858-ba63-4cd8-918a-d2213bb1da7f",
+        "tool": "trae-cue"
+      }
+    },
+    "s_ef1fa94ea8c7db": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-d48fda09-1c31-446c-8b8d-93923dd9f340",
+        "model": "default"
+      },
+      "human_author": "Kurkur <mccllm@qq.com>",
+      "custom_attributes": {
+        "edit_kind": "file_edit",
+        "external_session_id": "icr-d48fda09-1c31-446c-8b8d-93923dd9f340",
+        "source_scene": "cue",
+        "tool": "trae-cue",
+        "client_type": "ide"
+      }
+    }
+  }
+}
