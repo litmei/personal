@@ -311,11 +311,11 @@ ARGS_DECODE=(
 
 ## [MTP]
 #  --speculative-algorithm EAGLE3
-#  --speculative-draft-model-path ${DRAFT_MODEL_PATH}
 #  --speculative-num-steps 4
 #  --speculative-eagle-topk 1
 #  --speculative-num-draft-tokens 5
 #  --speculative-draft-model-quantization unquant
+#  --speculative-draft-model-path ${DRAFT_MODEL_PATH}
 
 ## [OTHER]
   --model-loader-extra-config '{"enable_multithread_load": true}'
