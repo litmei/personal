@@ -7,8 +7,7 @@
 # 3. 修改详细脚本参数
 # 4. 运行该脚本 bash xx.sh
 
-# wget https://raw.githubusercontent.com/openai/grade-school-math/master/grade_school_math/data/test.jsonl
-# mv test.jsonl gsm8k.jsonl
+# wget https://raw.githubusercontent.com/openai/grade-school-math/master/grade_school_math/data/test.jsonl -o gsm8k.jsonl --no-check-certificate
 # export PYTHONPATH=/home/xjw/code/sglang/python:$PYTHONPATH
 python3 -m sglang.test.few_shot_gsm8k \
   --num-questions 200 \

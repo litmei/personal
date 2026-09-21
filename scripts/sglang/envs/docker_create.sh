@@ -38,6 +38,7 @@ docker run -itd --name sgl-xjw --shm-size=16g \
     swr.cn-southwest-2.myhuaweicloud.com/base_image/dockerhub/lmsysorg/sglang:cann9.0.0-a3-20260602
 
 exit 0
+# shellcheck disable=SC2317
 
 # A2 设备脚本
 # todo
