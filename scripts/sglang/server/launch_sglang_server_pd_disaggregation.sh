@@ -236,7 +236,7 @@ ARGS_PREFILL=(
   --deepep-mode auto
 
 ## [pd disaggregation]
- --disaggregation-transfer-backend ascend
+ --disaggregation-transfer-backend ascend  # 修改成fake跑纯Prefill
 ## [prefill]
  --disaggregation-mode prefill
  --disaggregation-bootstrap-port ${DISAG_BOOTSTRAP_PORT}
@@ -292,9 +292,9 @@ ARGS_DECODE=(
   --deepep-mode auto
 
 ## [pd disaggregation]
-#  --disaggregation-transfer-backend ascend
+  --disaggregation-transfer-backend ascend  # 修改成fake跑纯decode
 ## [decode]
-#  --disaggregation-mode decode
+  --disaggregation-mode decode
 
 ## [MM]
 #  --enable-multimodal

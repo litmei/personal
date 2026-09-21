@@ -15,6 +15,9 @@ ARGS=(
   --random-input 2000
   --random-output 500
   --random-range-ratio 1.0
+
+#  --fake-prefill
+#  --fake-decode
 )
 
 python3 -m sglang.bench_serving "${ARGS[@]}"
