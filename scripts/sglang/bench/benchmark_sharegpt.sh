@@ -22,3 +22,5 @@ ARGS=(
 
 python3 -m sglang.bench_serving "${ARGS[@]}"
 
+# flush cache
+#curl -s -X POST "http://127.0.0.1:8880/flush_cache?timeout=30"
