@@ -165,8 +165,9 @@ ARGS=(
   --disable-radix-cache
   --nnodes "${NODE_NUM}"
   --node-rank "${NODE_ID}"
-  --dist-init-addr "${MASTER_IP}":${MASTER_PORT_INIT}
+#  --dist-init-addr "${MASTER_IP}":${MASTER_PORT_INIT}
 #  --disable-overlap-schedule
+  --skip-server-warmup
 
 ## [PARALLEL]
   --tp-size 4
