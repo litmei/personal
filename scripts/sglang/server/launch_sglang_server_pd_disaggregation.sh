@@ -143,8 +143,8 @@ if [ "${PLATFORM_LOWER}" = "npu" ]; then
 
   ## [pd disaggregation]
   #export MEMFABRIC_HYBRID_EXTEND_LIB_PATH=
-  #export ASCEND_MF_STORE_URL="tcp://${MASTER_IP_PREFILL}:24669"  # 已弃用
-  #export MF_CONFIG_STORE_URL="tcp://${MASTER_IP_PREFILL}:24669"
+  export ASCEND_MF_STORE_URL="tcp://${MASTER_IP_PREFILL}:24669"  # 已弃用
+  export MF_CONFIG_STORE_URL="tcp://${MASTER_IP_PREFILL}:24669"
   ## [pd A5]
   #export MF_HYBM_USE_VMM_SEGMENT=1
   #export ASCEND_MF_TRANSFER_PROTOCOL=device_urma
@@ -167,6 +167,8 @@ if [ "${PLATFORM_LOWER}" = "npu" ]; then
     # export SGLANG_ZBAL_LOCAL_MEM_SIZE=61184
     ## [pd]
     export SGLANG_DISAGGREGATION_BOOTSTRAP_TIMEOUT=60
+    ## [eplb]
+    # export SGLANG_EXPERT_DISTRIBUTION_RECORDER_DIR=/home/xjw/eplb_xx/prefill
     :
   elif [ "${NODE_CLASS}" = "decode" ]; then
     ## [cann]
@@ -183,6 +185,8 @@ if [ "${PLATFORM_LOWER}" = "npu" ]; then
     export SGLANG_ENABLE_SPEC_V2=1
     export SGLANG_NPU_USE_MULTI_STREAM=1
     export SGLANG_SPEC_ENABLE_OVERLAP_REFLOW=1
+    ## [eplb]
+    # export SGLANG_EXPERT_DISTRIBUTION_RECORDER_DIR=/home/xjw/eplb_xx/decode
     :
   else  # router
     :  # router 无需额外环境变量
@@ -233,7 +237,7 @@ ARGS_PREFILL=(
   --dp-size 4
   --enable-dp-attention
   --moe-a2a-backend deepep
-  --deepep-mode auto
+  --deepep-mode normal
 
 ## [pd disaggregation]
  --disaggregation-transfer-backend ascend  # 修改成fake跑纯Prefill
@@ -254,6 +258,12 @@ ARGS_PREFILL=(
 #  --disable-cuda-graph  # 已弃用
   --cuda-graph-backend-prefill disabled
 #  --cuda-graph-bs-prefill 1 2 4 8 16
+
+## [eplb]
+#  --eplb-rebalance-num-iterations 2048
+#  --expert-distribution-recorder-buffer-size 2048
+#  --expert-distribution-recorder-mode stat  # stat - 跨多个fwd pass进行聚合专家计数
+#  --ep-dispatch-algorithm static
 
 ## [OTHER]
   --prefill-delayer-max-delay-passes 200  # 需要dp attn下生效
@@ -289,7 +299,7 @@ ARGS_DECODE=(
   --dp-size 4
   --enable-dp-attention
   --moe-a2a-backend deepep
-  --deepep-mode auto
+  --deepep-mode low_latency
 
 ## [pd disaggregation]
   --disaggregation-transfer-backend ascend  # 修改成fake跑纯decode
@@ -316,6 +326,12 @@ ARGS_DECODE=(
 #  --speculative-num-draft-tokens 5
 #  --speculative-draft-model-quantization unquant
 #  --speculative-draft-model-path ${DRAFT_MODEL_PATH}
+
+## [eplb]
+  --eplb-rebalance-num-iterations 2048
+  --expert-distribution-recorder-buffer-size 2048
+  --expert-distribution-recorder-mode stat  # stat - 跨多个fwd pass进行聚合专家计数
+  --ep-dispatch-algorithm static
 
 ## [OTHER]
   --model-loader-extra-config '{"enable_multithread_load": true}'
