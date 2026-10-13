@@ -10,7 +10,7 @@ NODE_IPS_DECODE=(
   # 1.2.3.6
   # 1.2.3.7
 )
-NODE_IPS_ROUTER= # 1.2.3.8
+NODE_IPS_ROUTER= # 1.2.3.8 fixme 当前如果router是prefill或decode节点，会自动识别不出来，应该把node_class 提上来手动配置---不过我认为，最好把pd分离的脚本拆开，现在在一个脚本中过于冗余，调整起来很麻烦
 
 # 下面的参数默认会被覆写，一般不用动，此处留默认值是兼容单机PD分离场景
 PLATFORM=npu  # npu, cuda
@@ -264,6 +264,7 @@ ARGS_PREFILL=(
 #  --expert-distribution-recorder-buffer-size 2048
 #  --expert-distribution-recorder-mode stat  # stat - 跨多个fwd pass进行聚合专家计数
 #  --ep-dispatch-algorithm static
+#  --init-expert-location /home/xxx/expert_distribution_recorder_yyy.zzz.pt
 
 ## [OTHER]
   --prefill-delayer-max-delay-passes 200  # 需要dp attn下生效
@@ -328,10 +329,11 @@ ARGS_DECODE=(
 #  --speculative-draft-model-path ${DRAFT_MODEL_PATH}
 
 ## [eplb]
-  --eplb-rebalance-num-iterations 2048
-  --expert-distribution-recorder-buffer-size 2048
-  --expert-distribution-recorder-mode stat  # stat - 跨多个fwd pass进行聚合专家计数
-  --ep-dispatch-algorithm static
+#  --eplb-rebalance-num-iterations 2048
+#  --expert-distribution-recorder-buffer-size 2048
+#  --expert-distribution-recorder-mode stat  # stat - 跨多个fwd pass进行聚合专家计数
+#  --ep-dispatch-algorithm static
+#  --init-expert-location /home/xxx/expert_distribution_recorder_yyy.zzz.pt
 
 ## [OTHER]
   --model-loader-extra-config '{"enable_multithread_load": true}'
@@ -363,7 +365,12 @@ fi
 
 
 exit 0
-# shellcheck disable=SC2317
 ######################################
 #           HELP SCRIPTS             #
 ######################################
+
+## [eplb]
+# 启动热度表记录
+curl --location 'http://127.0.0.1:8010/start_expert_distribution_record'
+# 导出热度表记录
+curl --location 'http://127.0.0..1:8010/dump_expert_distribution_record'
