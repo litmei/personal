@@ -131,7 +131,12 @@ def build_prompt_text(tokenizer, unique_len: int, rng: random.Random, prefix_tex
         raise RuntimeError("语料 tokenize 结果为空，请检查 tokenizer 路径")
 
     prefix_len = len(tokenizer.encode(prefix_text, add_special_tokens=False)) if prefix_text else 0
-    unique_len = max(1, unique_len)
+    unique_len = max(0, unique_len)
+    if prefix_len + unique_len == 0:
+        unique_len = 1  # 避免构造出空 prompt
+    if unique_len == 0:
+        return prefix_text  # 只有公共前缀
+
     target_len = prefix_len + unique_len
 
     ids = _sample_ids(corpus_ids, unique_len, rng)
@@ -146,7 +151,7 @@ def build_prompt_text(tokenizer, unique_len: int, rng: random.Random, prefix_tex
         if delta > 0:
             ids = ids + corpus_ids[:delta]
         else:
-            ids = ids[: max(1, len(ids) + delta)]
+            ids = ids[: max(0, len(ids) + delta)]
         text = prefix_text + tokenizer.decode(ids)
 
     return text
