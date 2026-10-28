@@ -49,18 +49,21 @@ echo "错误：请使用 python 而不是 bash 运行此脚本！" >&2; exit 1
   python curl_bench_batch.py --tokenizer-path /path/to/tokenizer \
       --input-lens "4096,4096,4096 4096 4096 4096" --max-new-tokens 128
 
-  # 公共前缀 1024 token，一批 4 条，总长度分别 2048 / 4096 / 8192 / 16384
+  # 公共前缀 1024 token，一批 4 条，非前缀部分分别 1024 / 3072 / 7168 / 15360
+  #（实际总长度 = 1024 + 非前缀长度）
   python curl_bench_batch.py \
       --tokenizer-path /path/to/tokenizer \
-      --prefix-len 1024 --input-lens "2048,4096,8192,16384" \
+      --prefix-len 1024 --input-lens 1024,3072,7168,15360 \
       --max-new-tokens 128 --preview
 
 说明
-- --input-lens 语法：同一批内用逗号分隔，不同批之间用空格分隔（整段需要加引号），
+- --input-lens 表示**非公共前缀部分**的 token 长度（不给 --prefix-len 时即总长度）；
+  实际总长度 = prefix_len + input_len，表格中的“输入长度”是实际总长度。
+- --input-lens 语法：同一批内用逗号分隔，不同批之间用空格分隔，
   如 "4096,4096,4096 4096" = 一批 3 条 + 一批 1 条；批内并发、批间顺序执行。
 - 首次发送前建议服务端已完成 warmup，否则首批 TTFT 会偏高。
-- 输入长度以 tokenizer.encode(text, add_special_tokens=False) 的真实长度为准，
-  若与目标长度无法完全对齐，会打印实际长度。
+- 长度以 tokenizer.encode(text, add_special_tokens=False) 的真实编码为准，
+  若与目标长度无法完全对齐，预览里会打印实际值。
 - 公共前缀在同一次运行内（跨批、跨 --repeat 轮）保持不变；不同次运行默认使用随机种子，
   前缀会变化（--prefix-seed N 可复现某次运行的前缀，preview/总览会打印该 seed）。
 - 未给 --input-lens 时，用 --batch-size 随机采样长度并组成**一批**；两者互斥。
@@ -118,19 +121,20 @@ def _sample_ids(corpus_ids, length: int, rng: random.Random):
     return (corpus_ids[start:] + corpus_ids * (length // len(corpus_ids) + 2))[:length]
 
 
-def build_prompt_text(tokenizer, target_len: int, rng: random.Random, prefix_text: str = "") -> str:
-    """用 tokenizer 构造长度尽量等于 target_len（token 数）的文本
+def build_prompt_text(tokenizer, unique_len: int, rng: random.Random, prefix_text: str = "") -> str:
+    """构造 prefix_text + 随机后缀 的文本，其中**非前缀部分**的 token 数尽量等于 unique_len
 
-    prefix_text 非空时：前缀原样保留，只调整其后的随机后缀，使整段总长度等于 target_len。
+    prefix_text 为空时即构造总长 unique_len 的纯随机文本。
     """
     corpus_ids = tokenizer.encode(CORPUS, add_special_tokens=False)
     if not corpus_ids:
         raise RuntimeError("语料 tokenize 结果为空，请检查 tokenizer 路径")
 
     prefix_len = len(tokenizer.encode(prefix_text, add_special_tokens=False)) if prefix_text else 0
-    suffix_len = max(1, target_len - prefix_len)
+    unique_len = max(1, unique_len)
+    target_len = prefix_len + unique_len
 
-    ids = _sample_ids(corpus_ids, suffix_len, rng)
+    ids = _sample_ids(corpus_ids, unique_len, rng)
     text = prefix_text + tokenizer.decode(ids)
 
     # decode -> encode 可能因合并规则（含前后缀拼接处）产生偏差，迭代校准后缀
@@ -221,6 +225,7 @@ async def run_one(session, url, case, args):
 
     result = {
         "case_id": case["case_id"],
+        "batch": case["batch"],
         "prompt_len": case["target_len"],
         "prompt_sha": case["prompt_sha"],
         "output_text": "",
@@ -345,24 +350,21 @@ def make_cases(tokenizer, args):
             ]
         ]
 
-    all_lens = [length for group in lens_groups for length in group]
     prefix_seed = resolve_prefix_seed(args)
     prefix_text = build_shared_prefix(tokenizer, args.prefix_len, prefix_seed or 0)
     prefix_tokens = len(tokenizer.encode(prefix_text, add_special_tokens=False)) if prefix_text else 0
-    if prefix_tokens and min(all_lens) <= prefix_tokens:
-        print(f"[WARN] 公共前缀 {prefix_tokens} tokens >= 最小用例长度 {min(all_lens)}，"
-              f"该用例会被前缀占满，无法再拼接随机后缀", file=sys.stderr)
 
     cases = []
     case_id = 0
     for batch_idx, group in enumerate(lens_groups):
-        for target_len in group:
-            prompt = build_prompt_text(tokenizer, target_len, rng, prefix_text)
+        for unique_len in group:
+            prompt = build_prompt_text(tokenizer, unique_len, rng, prefix_text)
             actual_len = len(tokenizer.encode(prompt, add_special_tokens=False))
             cases.append(
                 {
                     "case_id": case_id,
                     "batch": batch_idx,
+                    "unique_len": unique_len,
                     "target_len": actual_len,
                     "prompt": prompt,
                     "prompt_sha": sha256_text(prompt),
@@ -397,8 +399,8 @@ def preview_cases(cases, prefix_info, args):
         if case["batch"] != last_batch:
             last_batch = case["batch"]
             print(f"--- Batch {last_batch} ---")
-        print(f"[Case {case['case_id']}] 输入长度={case['target_len']} "
-              f"sha256={case['prompt_sha']}")
+        print(f"[Case {case['case_id']}] 非前缀长度={case['unique_len']} "
+              f"总长度={case['target_len']} sha256={case['prompt_sha']}")
         text = case["prompt"]
         if args.preview_chars > 0:
             text = text[: args.preview_chars] + ("..." if len(case["prompt"]) > args.preview_chars else "")
@@ -582,7 +584,7 @@ def parse_args():
 
     # batch 与输入长度
     parser.add_argument("--input-lens", nargs="+", default=[],
-                        help="用例长度：同一批用逗号分隔，不同批用空格分隔，"
+                        help="非公共前缀部分的 token 长度：同一批用逗号分隔，不同批用空格分隔，"
                              "如 4096,4096,4096 为一批3条；4096 4096 4096 为3批各1条")
     parser.add_argument("--batch-size", type=int, default=None,
                         help="未指定 --input-lens 时的批大小（用例数，长度随机采样）；与 --input-lens 互斥")
