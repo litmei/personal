@@ -436,7 +436,7 @@ def fmt(value, spec, suffix="", empty="-"):
 
 
 def print_table(results, args):
-    headers = ["#", "批次", "状态", "输入长度", "输入SHA", "输出长度",
+    headers = ["#", "批次", "状态", "输入长度", "输入SHA", "输出长度", "输出SHA",
                "MTP命中率", "TTFT(ms)", "TPOT(ms)", "总耗时(s)"]
     rows = []
     for r in results:
@@ -448,6 +448,7 @@ def print_table(results, args):
                 str(r["prompt_len"]),
                 r["prompt_sha"][: args.sha_len],
                 str(r["output_len"]),
+                r["output_sha"][: args.sha_len] if r["output_sha"] else "-",
                 fmt(r["mtp_rate"] * 100 if r["mtp_rate"] is not None else None, ".2f", "%"),
                 fmt(r["ttft"] * 1000 if r["ttft"] is not None else None, ".2f"),
                 fmt(r["tpot"] * 1000 if r["tpot"] is not None else None, ".2f"),
@@ -455,7 +456,7 @@ def print_table(results, args):
             ]
         )
 
-    aligns = ["right", "right", "center", "right", "left", "right",
+    aligns = ["right", "right", "center", "right", "left", "right", "left",
               "right", "right", "right", "right"]
     widths = [char_width(h) for h in headers]
     for row in rows:
