@@ -172,7 +172,8 @@ ARGS=(
 ## [PARALLEL]
   --tp-size 4
   --dp-size 4
-  --enable-dp-attention
+#  --enable-dp-attention  # 已弃用
+  --attn-dp-size 4
   --moe-a2a-backend deepep
   --deepep-mode auto
 

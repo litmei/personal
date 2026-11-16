@@ -235,7 +235,8 @@ ARGS_PREFILL=(
 ## [PARALLEL]
   --tp-size 4
   --dp-size 4
-  --enable-dp-attention
+#  --enable-dp-attention  # 已弃用
+  --attn-dp-size 4
   --moe-a2a-backend deepep
   --deepep-mode normal
 
@@ -297,7 +298,8 @@ ARGS_DECODE=(
 
 ## [PARALLEL]
   --tp-size 4
-  --dp-size 4
+#  --enable-dp-attention  # 已弃用
+  --attn-dp-size 4
   --enable-dp-attention
   --moe-a2a-backend deepep
   --deepep-mode low_latency
